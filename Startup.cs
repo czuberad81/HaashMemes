@@ -29,27 +29,6 @@ namespace hashmemes
 
             services.AddControllersWithViews();
             services.AddEntityFrameworkSqlite().AddDbContext<DataContext>();
-            services.AddIdentityCore<User>(options =>
-            {
-                options.Password.RequireNonAlphanumeric = false;
-            })
-            .AddEntityFrameworkStores<DataContext>()
-            .AddSignInManager<SignInManager<User>>();
-
-            services.AddScoped<TokenService>();
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("This is my super duper key"));
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(opt =>
-            {
-                opt.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = key,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                };
-            });
 
 
 
@@ -78,7 +57,6 @@ namespace hashmemes
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-            app.UseAuthorization();
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
