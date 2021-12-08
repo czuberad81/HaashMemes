@@ -4,7 +4,7 @@ namespace hashmemes.Models
 {
     public class Post
     {
-                public Guid Id { get; set; }
+        public Guid Id { get; set; }
 
     }
 }
