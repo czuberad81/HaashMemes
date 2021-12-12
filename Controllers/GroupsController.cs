@@ -35,7 +35,7 @@ namespace hashmemes.Controllers
         public async Task<IActionResult> CreateGroup([FromBody] Group groupDetail)
         {
             /*
-            Summary: Method receives groupDetail which contains group name and creator (currentMember)
+            Summary: Method responsible for creating groups
             Arguments: Group object
             Return: Http Request
             */
@@ -61,7 +61,7 @@ namespace hashmemes.Controllers
         public IActionResult GetGroupContent([FromBody] string groupId)
         {
             /*
-            Summary: Method receives group id to return the content
+            Summary: Method that returns all group contents
             Arguments: Group ID
             Return: Http Request with List<Posts> from Group class
             */
@@ -78,6 +78,40 @@ namespace hashmemes.Controllers
 
 
             return Ok(currentPosts);
+        }
+
+        [HttpPost("addToGroup/{id}")]
+        public async Task<IActionResult> AddUserToGroup([FromBody] User user, string id)
+        {
+            /*
+            Summary: Method that adds a specific user to a group 
+            Arguments: Group ID and User
+            Return: Http Request with code
+            */
+            if (id == null || user == null)
+            {
+                return BadRequest();
+            }
+            if (user.UserName == null)
+            {
+                return BadRequest();
+            }
+            var doesGroupExist = _context.Groups.Where(x => x.Id.Equals(new Guid(id)));
+            if (doesGroupExist == null)
+            {
+                return BadRequest("Group does not exist");
+            }
+            var doesUserExist = _context.Users.Where(x => x.Id.Equals((user.Id)));
+            if (doesUserExist == null)
+            {
+                return BadRequest("user cannot be null");
+            }
+            var getGroup = await _context.Groups.Include(x => x.Members).SingleOrDefaultAsync(x => x.Id.Equals(new Guid(id)));
+            var getUser = _context.Users.SingleOrDefault(x => x.Id.Equals(user.Id));
+            getGroup.Members.Add(getUser);
+
+
+            return Ok("User added to group");
         }
 
 

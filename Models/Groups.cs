@@ -13,5 +13,11 @@ namespace hashmemes.Models
         public string GroupName { get; set; }
 
         public List<Post> Posts { get; set; }
+
+
+        public bool IsCurrentOwner(string userName)
+        {
+            return userName.Equals(CurrentOwner.UserName);
+        }
     }
 }
