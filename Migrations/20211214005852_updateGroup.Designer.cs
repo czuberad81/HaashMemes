@@ -9,8 +9,8 @@ using hashmemes.Persistence;
 namespace hashmemes.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211210003854_addingCommentAndUserClasses")]
-    partial class addingCommentAndUserClasses
+    [Migration("20211214005852_updateGroup")]
+    partial class updateGroup
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,9 @@ namespace hashmemes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("GroupName")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Groups");
@@ -66,9 +69,14 @@ namespace hashmemes.Migrations
                     b.Property<DateTime>("PostDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -80,6 +88,9 @@ namespace hashmemes.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("GroupId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -101,6 +112,10 @@ namespace hashmemes.Migrations
                     b.HasOne("hashmemes.Models.Group", null)
                         .WithMany("Posts")
                         .HasForeignKey("GroupId");
+
+                    b.HasOne("hashmemes.Models.User", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("hashmemes.Models.User", b =>
@@ -120,6 +135,11 @@ namespace hashmemes.Migrations
             modelBuilder.Entity("hashmemes.Models.Post", b =>
                 {
                     b.Navigation("CommentList");
+                });
+
+            modelBuilder.Entity("hashmemes.Models.User", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

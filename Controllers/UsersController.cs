@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using hashmemes.Models;
 using hashmemes.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace hashmemes.Controllers
@@ -22,7 +24,7 @@ namespace hashmemes.Controllers
         [HttpPost]
         public IActionResult PostUser([FromBody] User user)
         {
-            if (user.Name == null)
+            if (user.UserName == null)
             {
                 return BadRequest("name is null");
             }

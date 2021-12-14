@@ -67,9 +67,14 @@ namespace hashmemes.Migrations
                     b.Property<DateTime>("PostDate")
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("GroupId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Posts");
                 });
@@ -81,6 +86,9 @@ namespace hashmemes.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("GroupId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -102,6 +110,10 @@ namespace hashmemes.Migrations
                     b.HasOne("hashmemes.Models.Group", null)
                         .WithMany("Posts")
                         .HasForeignKey("GroupId");
+
+                    b.HasOne("hashmemes.Models.User", null)
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("hashmemes.Models.User", b =>
@@ -121,6 +133,11 @@ namespace hashmemes.Migrations
             modelBuilder.Entity("hashmemes.Models.Post", b =>
                 {
                     b.Navigation("CommentList");
+                });
+
+            modelBuilder.Entity("hashmemes.Models.User", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

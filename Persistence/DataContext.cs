@@ -13,7 +13,7 @@ namespace hashmemes.Persistence
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Filename=database.db");
+            optionsBuilder.UseSqlite("Filename=Database.db");
         }
     }
 }

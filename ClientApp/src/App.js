@@ -6,12 +6,14 @@ import {
   Link
 } from "react-router-dom";
 import Home from './components/Home';
+import SearchGroup from './components/SearchGroup';
 import './custom.css'
 
 function App() {
   return (
     <Router>
       <Route exact path='/' component={Home} />
+      <Route path='/Search' component={SearchGroup} />
     </Router>
   );
 }

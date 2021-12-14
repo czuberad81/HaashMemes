@@ -39,7 +39,7 @@ namespace hashmemes.Controllers
             Arguments: Group object
             Return: Http Request
             */
-            var doesGroupExist = _context.Groups.Where(x => x.GroupName.Equals(groupDetail.GroupName));
+            var doesGroupExist = _context.Groups.FirstOrDefault(x => x.GroupName.Contains(groupDetail.GroupName));
 
             if (doesGroupExist != null)
             {
@@ -51,10 +51,12 @@ namespace hashmemes.Controllers
                 return BadRequest("Group name should not be null");
             }
 
-            await _context.Groups.AddAsync(groupDetail);
 
 
-            return Ok($"Group Created. Group Owner is {groupDetail.CurrentOwner}");
+            _context.Groups.Add(groupDetail);
+            await _context.SaveChangesAsync();
+
+            return Ok($"Group Created");
         }
 
         [HttpGet("{id}")]
@@ -106,12 +108,24 @@ namespace hashmemes.Controllers
             {
                 return BadRequest("user cannot be null");
             }
-            var getGroup = await _context.Groups.Include(x => x.Members).SingleOrDefaultAsync(x => x.Id.Equals(new Guid(id)));
+            var getGroup = await _context.Groups.SingleOrDefaultAsync(x => x.Id.Equals(new Guid(id)));
             var getUser = _context.Users.SingleOrDefault(x => x.Id.Equals(user.Id));
             getGroup.Members.Add(getUser);
 
 
             return Ok("User added to group");
+        }
+
+        [HttpGet]
+        public IActionResult GetAllGroups()
+        {
+            /*
+           Summary: Method that returns all group objects in database to be later displayed to user when they
+           want to join a group.  
+           Arguments: NONE
+           Return: Http Request with the groups returned from database. 
+           */
+            return Ok(_context.Groups.Include(x => x.Members).Include(x => x.Posts).Include(x => x.Posts));
         }
 
 
