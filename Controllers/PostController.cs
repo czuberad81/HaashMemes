@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HaashMemes.Models;
+using HaashMemes.Models.DTOs;
 using hashmemes.Models;
 using hashmemes.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +37,7 @@ namespace HaashMemes.Controllers
             if(post == null)
                 return BadRequest("No post given");
             
-            var user = await _context.Users.Include(x=>x.Posts).SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
+            var user = await _context.Users.Include(x=>x.Posts).ThenInclude(x=>x.CommentList).SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
         
             if(user == null){
                 return BadRequest("User does not exist");
@@ -47,7 +49,30 @@ namespace HaashMemes.Controllers
             return Ok(user);
         }
 
-        
+        [HttpPost("{id}/comment")]
+        public async Task<IActionResult> Post(string id,[FromBody] Comment comment)
+        {
+            if(comment == null)
+                return BadRequest("No post given");
+            
+            var post = await _context.Posts.SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
+
+            if(post == null){
+                return BadRequest("Post does not exist");
+            }
+
+            comment.CommentDate = DateTime.Now;
+            post.CommentList.Add(comment);
+            
+            // var postTemp = new PostDTO{
+            //     Id = post.Id,
+            //     PostCaption = post.PostCaption,
+            //     PostDate = post.PostDate,
+            //     comments = post.CommentList.Select(x=>x.Text).OfType<string>().ToList()
+            // };
+            return Ok(post);
+        }
+
 
 
 
