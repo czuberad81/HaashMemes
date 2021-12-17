@@ -29,7 +29,6 @@ namespace HaashMemes.Controllers
         /*
         Summary: adding post to specified user
         Arguements: Post object, string id
-        Return: Http Request
         */
         [HttpPost("{id}/post")]
         public async Task<IActionResult> AddImage(string id,[FromBody] Post post)
@@ -42,20 +41,25 @@ namespace HaashMemes.Controllers
             if(user == null){
                 return BadRequest("User does not exist");
             }
-
+            
+            post.PostDate = DateTime.Now;
             user.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok();
         }
 
+        /*
+        Summary: adding comment to post
+        Arguements: comment object, string id
+        */
         [HttpPost("{id}/comment")]
         public async Task<IActionResult> Post(string id,[FromBody] Comment comment)
         {
             if(comment == null)
                 return BadRequest("No post given");
             
-            var post = await _context.Posts.SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
+            var post = await _context.Posts.Include(x=>x.CommentList).SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
 
             if(post == null){
                 return BadRequest("Post does not exist");
@@ -63,16 +67,37 @@ namespace HaashMemes.Controllers
 
             comment.CommentDate = DateTime.Now;
             post.CommentList.Add(comment);
-            
-            // var postTemp = new PostDTO{
-            //     Id = post.Id,
-            //     PostCaption = post.PostCaption,
-            //     PostDate = post.PostDate,
-            //     comments = post.CommentList.Select(x=>x.Text).OfType<string>().ToList()
-            // };
-            return Ok(post);
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
+         /*
+        Summary: get user posts, return all posts from arguement id
+        Arguements: string id
+        */
+        [HttpGet("{id}/getPosts")]
+        public async Task<IActionResult> GetUserPosts(string id)
+        {
+            var user = await _context.Users.Include(x=>x.Posts).ThenInclude(x=>x.CommentList).SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
+            if(user == null)
+                return BadRequest("User doesnt exist");
+            return Ok(user.Posts);
+        }
+
+        /*
+        Summary: get post comments, return all comments from arguement post id
+        Arguements: string id
+        */
+        [HttpGet("{id}/getComments")]
+        public async Task<IActionResult> getPostComments(string id)
+        {
+            var post = await _context.Posts.Include(x=>x.CommentList).SingleOrDefaultAsync(x=>x.Id.Equals(new Guid(id)));
+            if(post == null)
+                return BadRequest("Post doesnt exist");
+            
+            return Ok(post.CommentList);
+        }
+    
 
 
 
