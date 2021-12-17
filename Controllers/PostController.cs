@@ -46,7 +46,7 @@ namespace HaashMemes.Controllers
             user.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(user);
         }
 
         /*
@@ -54,7 +54,7 @@ namespace HaashMemes.Controllers
         Arguements: comment object, string id
         */
         [HttpPost("{id}/comment")]
-        public async Task<IActionResult> Post(string id,[FromBody] Comment comment)
+        public async Task<IActionResult> PostComment(string id,[FromBody] Comment comment)
         {
             if(comment == null)
                 return BadRequest("No post given");
@@ -68,7 +68,7 @@ namespace HaashMemes.Controllers
             comment.CommentDate = DateTime.Now;
             post.CommentList.Add(comment);
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(post);
         }
 
          /*
